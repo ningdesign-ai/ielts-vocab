@@ -64,19 +64,13 @@
   .bcard{background:var(--card); border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);}
   .btitle{font-size:19px; font-weight:700; line-height:1.35;}
   .bdate{font-size:12px; color:var(--sub); margin-top:3px;}
-  .bintro{font-size:14px; color:#555; line-height:1.6; margin-top:10px; -webkit-user-select:text; user-select:text;}
   .baudio{width:100%; margin-top:12px; height:40px;}
-  .bquiz{font-size:13px; color:#666; background:#f7f8fa; border-radius:10px; padding:9px 11px; margin-top:12px; line-height:1.55; -webkit-user-select:text; user-select:text;}
-  .bquiz .blbl{color:var(--blue); font-weight:600; margin-right:6px;}
-  .btoggle{display:block; width:100%; text-align:left; border:none; background:#eef1ff; color:var(--blue); font-size:14px; font-weight:600; padding:11px 13px; border-radius:11px; margin-top:12px; cursor:pointer;}
-  .btoggle::after{content:' ▾'; float:right; color:var(--sub);}
-  .btoggle.open::after{content:' ▴';}
-  .bbody{display:none; margin-top:10px; padding:6px 12px; background:#fafbfc; border-radius:11px; -webkit-user-select:text; user-select:text;}
-  .bbody.open{display:block;}
-  .bline{font-size:14px; line-height:1.65; color:#333; padding:6px 0; border-bottom:1px solid #f0f1f3;}
+  .bsummary{font-size:14px; color:#444; line-height:1.7; margin-top:14px; padding:12px 14px; background:#f6f8ff; border-radius:12px; -webkit-user-select:text; user-select:text;}
+  .bsummary .blbl{color:var(--blue); font-weight:700; margin-right:6px;}
+  .btrans{font-size:15px; line-height:1.75; color:#333; margin-top:14px; -webkit-user-select:text; user-select:text;}
+  .bline{padding:7px 0; border-bottom:1px solid #f0f1f3;}
   .bline:last-child{border-bottom:none;}
-  .bline .spk{font-weight:700; color:var(--blue); display:block; margin-bottom:1px;}
-  .bline .wd{font-weight:700; color:#1a1a1a;}
+  .bline .spk{font-weight:700; color:var(--blue); display:block; margin-bottom:2px; font-size:14px;}
 </style>
 </head>
 <body>
@@ -111,7 +105,7 @@
     </section>
 
     <section id="bbcView" style="display:none">
-      <div class="bbctip">最近 4 期 · 文字稿可离线看 · 听音频需开梯子</div>
+      <div class="bbctip">最新一期 · 文章可离线看 · 听音频需开梯子</div>
       <div id="bbcList"></div>
     </section>
   </main>
@@ -250,30 +244,22 @@ document.getElementById('favFilter').addEventListener('click', ()=>{
 });
 
 function renderBbc(){
-  const eps = (BBC && BBC.episodes) || [];
+  const ep = (BBC && BBC.episodes && BBC.episodes[0]) || null;
   let html = '';
-  for(const ep of eps){
+  if(ep){
     html += '<div class="bcard">' +
       '<div class="btitle">'+esc(ep.title)+'</div>' +
       '<div class="bdate">'+esc(ep.date)+'</div>' +
-      (ep.intro ? '<div class="bintro">'+esc(ep.intro)+'</div>' : '') +
-      '<audio class="baudio" controls preload="none" src="'+esc(ep.audio)+'"></audio>' +
-      (ep.question ? '<div class="bquiz"><span class="blbl">问题</span>'+esc(ep.question)+'</div>' : '');
-    html += '<button class="btoggle">词汇表（'+(ep.vocab||[]).length+'）</button><div class="bbody">';
-    for(const v of (ep.vocab||[])) html += '<div class="bline"><span class="wd">'+esc(v[0])+'</span> '+esc(v[1])+'</div>';
-    html += '</div>';
-    html += '<button class="btoggle">对话文字稿</button><div class="bbody">';
+      '<audio class="baudio" controls preload="none" src="'+esc(ep.audio)+'"></audio>';
+    if(ep.summary) html += '<div class="bsummary"><span class="blbl">大意</span>'+esc(ep.summary)+'</div>';
+    html += '<div class="btrans">';
     for(const t of (ep.transcript||[])) html += '<div class="bline"><span class="spk">'+esc(t[0])+'</span>'+esc(t[1])+'</div>';
     html += '</div></div>';
+  } else {
+    html = '<div style="color:#aaa;text-align:center;padding:40px 0">暂无内容</div>';
   }
   document.getElementById('bbcList').innerHTML = html;
 }
-document.getElementById('bbcList').addEventListener('click', e=>{
-  const btn = e.target.closest('.btoggle');
-  if(!btn) return;
-  btn.classList.toggle('open');
-  btn.nextElementSibling.classList.toggle('open');
-});
 
 document.getElementById('tabStudy').addEventListener('click', ()=>switchTab('study'));
 document.getElementById('tabBrowse').addEventListener('click', ()=>switchTab('browse'));

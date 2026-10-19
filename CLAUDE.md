@@ -19,9 +19,19 @@
 python3 build.py
 ```
 
+## 部署
+
+App 部署在 GitHub Pages，网址：https://ningdesign-ai.github.io/ielts-vocab/ （仓库 ningdesign-ai/ielts-vocab，main 分支根目录）。
+
+改完代码后：`git add -A && git commit -m "..." && git push origin main`，等 1~2 分钟 GitHub 自动部署，用户手机刷新网址即可看到。
+
 ## 更新每日英语（BBC）
 
-用户说「更新文章」「更新 BBC」时：先运行 `python3 fetch_bbc.py`（需梯子代理 127.0.0.1:7890 开着），再运行 `python3 build.py`。
+用户说「更新文章」「更新 BBC」时，完整流程：
+1. `python3 fetch_bbc.py`（需梯子代理 127.0.0.1:7890 开着）
+2. `python3 build.py`
+3. `git add -A && git commit -m "更新 BBC" && git push origin main`
+4. 等 1~2 分钟，提醒用户手机刷新网址。
 
 ## 已实现的功能
 
