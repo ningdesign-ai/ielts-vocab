@@ -57,20 +57,6 @@
   .bitem .w{font-weight:600; white-space:nowrap;}
   .bitem .m{color:#444; flex:1; line-height:1.45;}
   .bitem .wbtns{display:flex; gap:4px; flex-shrink:0;}
-
-  #bbcView{flex:1; display:flex; flex-direction:column; overflow:hidden; padding:0 16px;}
-  .bbctip{font-size:12px; color:var(--sub); text-align:center; margin:8px 0 12px; flex-shrink:0;}
-  #bbcList{flex:1; overflow-y:auto; padding-bottom:24px;}
-  .bcard{background:var(--card); border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.05);}
-  .btitle{font-size:19px; font-weight:700; line-height:1.35;}
-  .bdate{font-size:12px; color:var(--sub); margin-top:3px;}
-  .baudio{width:100%; margin-top:12px; height:40px;}
-  .bsummary{font-size:14px; color:#444; line-height:1.7; margin-top:14px; padding:12px 14px; background:#f6f8ff; border-radius:12px; -webkit-user-select:text; user-select:text;}
-  .bsummary .blbl{color:var(--blue); font-weight:700; margin-right:6px;}
-  .btrans{font-size:15px; line-height:1.75; color:#333; margin-top:14px; -webkit-user-select:text; user-select:text;}
-  .bline{padding:7px 0; border-bottom:1px solid #f0f1f3;}
-  .bline:last-child{border-bottom:none;}
-  .bline .spk{font-weight:700; color:var(--blue); display:block; margin-bottom:2px; font-size:14px;}
 </style>
 </head>
 <body>
@@ -80,7 +66,6 @@
     <div class="tabs">
       <button id="tabStudy" class="active">学习</button>
       <button id="tabBrowse">全部单词</button>
-      <button id="tabBbc">每日英语</button>
     </div>
   </header>
 
@@ -103,17 +88,11 @@
       </div>
       <ul class="blist" id="browseList"></ul>
     </section>
-
-    <section id="bbcView" style="display:none">
-      <div class="bbctip">最新一期 · 文章可离线看 · 听音频需开梯子</div>
-      <div id="bbcList"></div>
-    </section>
   </main>
 </div>
 
 <script>
 const WORDS = __WORDS_JSON__;
-const BBC = __BBC_JSON__;
 const GROUP = 50;
 const total = WORDS.length;
 const groups = Math.ceil(total / GROUP);
@@ -243,40 +222,18 @@ document.getElementById('favFilter').addEventListener('click', ()=>{
   renderBrowse();
 });
 
-function renderBbc(){
-  const ep = (BBC && BBC.episodes && BBC.episodes[0]) || null;
-  let html = '';
-  if(ep){
-    html += '<div class="bcard">' +
-      '<div class="btitle">'+esc(ep.title)+'</div>' +
-      '<div class="bdate">'+esc(ep.date)+'</div>' +
-      '<audio class="baudio" controls preload="none" src="'+esc(ep.audio)+'"></audio>';
-    if(ep.summary) html += '<div class="bsummary"><span class="blbl">大意</span>'+esc(ep.summary)+'</div>';
-    html += '<div class="btrans">';
-    for(const t of (ep.transcript||[])) html += '<div class="bline"><span class="spk">'+esc(t[0])+'</span>'+esc(t[1])+'</div>';
-    html += '</div></div>';
-  } else {
-    html = '<div style="color:#aaa;text-align:center;padding:40px 0">暂无内容</div>';
-  }
-  document.getElementById('bbcList').innerHTML = html;
-}
-
 document.getElementById('tabStudy').addEventListener('click', ()=>switchTab('study'));
 document.getElementById('tabBrowse').addEventListener('click', ()=>switchTab('browse'));
-document.getElementById('tabBbc').addEventListener('click', ()=>switchTab('bbc'));
 function switchTab(t){
   document.getElementById('tabStudy').classList.toggle('active', t==='study');
   document.getElementById('tabBrowse').classList.toggle('active', t==='browse');
-  document.getElementById('tabBbc').classList.toggle('active', t==='bbc');
   document.getElementById('studyView').style.display = t==='study' ? 'flex' : 'none';
   document.getElementById('browseView').style.display = t==='browse' ? 'flex' : 'none';
-  document.getElementById('bbcView').style.display = t==='bbc' ? 'flex' : 'none';
   if(t==='browse') renderBrowse();
 }
 
 renderStudy();
 renderBrowse();
-renderBbc();
 </script>
 </body>
 </html>
